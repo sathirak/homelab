@@ -46,3 +46,5 @@ sudo usermod -aG docker $USER
 
 echo "⚓ Installation complete! Please log out and log back in for docker group changes to take effect."
 echo "⚓ After logging back in, you can start Minikube with: minikube start --force"
+
+minikube start --force
