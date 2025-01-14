@@ -2,15 +2,15 @@
 
 set -e
 
-echo "🚀 Starting installation of Docker, Minikube, and kubectl..."
+echo "⚓ Starting installation of Docker, Minikube, and kubectl..."
 
 # Install system dependencies
-echo "📦 Installing system dependencies..."
+echo "⚓ Installing system dependencies..."
 sudo apt-get update
 sudo apt-get install -y ca-certificates curl gnupg
 
 # Install Docker
-echo "🐳 Installing Docker..."
+echo "⚓ Installing Docker..."
 # Remove conflicting packages
 for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do
     sudo apt-get remove -y $pkg || true
@@ -36,7 +36,7 @@ sudo install minikube-linux-amd64 /usr/local/bin/minikube
 rm minikube-linux-amd64
 
 # Install kubectl
-echo "☸️ Installing kubectl..."
+echo "⚓ Installing kubectl..."
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 rm kubectl
@@ -44,5 +44,5 @@ rm kubectl
 # Add current user to docker group
 sudo usermod -aG docker $USER
 
-echo "✅ Installation complete! Please log out and log back in for docker group changes to take effect."
-echo "🔥 After logging back in, you can start Minikube with: minikube start"
+echo "⚓ Installation complete! Please log out and log back in for docker group changes to take effect."
+echo "⚓ After logging back in, you can start Minikube with: minikube start --force"

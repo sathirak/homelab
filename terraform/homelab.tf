@@ -2,7 +2,7 @@ resource "digitalocean_droplet" "homelab" {
   image  = "ubuntu-22-04-x64"
   name   = "turbochungus"
   region = "sfo3"
-  size   = "s-1vcpu-1gb"
+  size   = "s-2vcpu-2gb"
   ssh_keys = [
     data.digitalocean_ssh_key.terraform.id
   ]
@@ -17,17 +17,10 @@ resource "digitalocean_droplet" "homelab" {
 
   provisioner "remote-exec" {
     inline = [
-      "apt-get update -y",
-      "apt-get install -y nginx",
-
+      "cd ~",
       "git clone https://github.com/sathirak/homelab.git",
-
-      "rm -rf /var/www/html/*",
-      "cp ./homelab/nginx/* /var/www/html/",
-
-      "rm -rf ./homelab",
-      "systemctl restart nginx",
-
+      "chmod +x ~/homelab/setup.sh",
+      "~/homelab/setup.sh",
       "echo This is your Homelab IP $(hostname -I | cut -d' ' -f1)"
     ]
   }
