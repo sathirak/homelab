@@ -2,7 +2,7 @@
 
 set -e
 
-echo "🏠 > Starting installation of Docker, Minikube, and kubectl..."
+echo "🏠 > Starting installation of Docker, K3s, and ArgoCD..."
 
 # Install Docker, see the blog I reffered to
 #  https://docs.docker.com/engine/install/ubuntu/
@@ -26,7 +26,28 @@ $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sou
 sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
+# Install K3s, see the blog I reffered to
+# https://www.digitalocean.com/community/tutorials/how-to-setup-k3s-kubernetes-cluster-on-ubuntu
 echo "🏠 > Installing K3s..."
 curl -sfL https://get.k3s.io | sh -
 
 sudo chmod 644 /etc/rancher/k3s/k3s.yaml
+
+# Install ArgoCD, see the blog I reffered to
+# https://argo-cd.readthedocs.io/en/stable/getting_started/
+echo "🏠 > Installing ArgoCD..."
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+echo "🏠 > Waiting for ArgoCD pods to be ready..."
+kubectl wait --for=condition=Ready pods --all -n argocd --timeout=300s
+
+echo "🏠 > Configuring ArgoCD service as NodePort..."
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "NodePort"}}'
+
+NODE_IP=$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[0].address}')
+NODE_PORT=$(kubectl get svc argocd-server -n argocd -o jsonpath='{.spec.ports[0].nodePort}')
+echo "🏠 > ArgoCD is available at: http://$NODE_IP:$NODE_PORT"
+
+ARGO_PASSWORD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
+echo "🏠 > ArgoCD initial admin password: $ARGO_PASSWORD"
