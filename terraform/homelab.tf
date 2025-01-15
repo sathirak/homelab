@@ -21,7 +21,7 @@ resource "digitalocean_droplet" "homelab" {
       "git clone https://github.com/sathirak/homelab.git",
       "chmod +x ~/homelab/setup.sh",
       "~/homelab/setup.sh",
-      "echo This is your Homelab IP $(hostname -I | cut -d' ' -f1)"
+      "echo 🏠 Homelab started on http://$(hostname -I | cut -d' ' -f1)"
     ]
   }
 }
